@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knee Osteoarthritis Severity Assessment | Medical AI Diagnostics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: #1e3a5f;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar p {
+            color: #b8c9e0;
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #1e3a5f;
+        }
+
+        .section-header h2 {
+            color: #1e3a5f;
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: #5a6c7d;
+            font-size: 1em;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        /* Upload Area */
+        .upload-section {
+            margin-bottom: 40px;
+        }
+
+        .upload-area {
+            border: 2px dashed #c5d1dc;
+            border-radius: 8px;
+            padding: 60px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .upload-area:hover {
+            border-color: #1e3a5f;
+            background: #f0f4f8;
+        }
+
+        .upload-area.dragover {
+            border-color: #1e3a5f;
+            background: #e8f0f8;
+            border-width: 3px;
+        }
+
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: #1e3a5f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .upload-subtext {
+            color: #5a6c7d;
+            font-size: 0.95em;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: #1e3a5f;
+            color: white;
+            padding: 14px 35px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: block;           /* ADD THIS */
+            margin-left: auto;        /* ADD THIS */
+            margin-right: auto;       /* ADD THIS */
+        }
+
+        .btn-primary:hover {
+            background: #2c4f7c;
+            box-shadow: 0 4px 12px rgba(30, 58, 95, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #95a5b8;
+            cursor: not-allowed;
+        }
+
+        /* Preview Section */
+        .preview-container {
+            margin: 30px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .preview-container h3 {
+            color: #1e3a5f;
+            margin-bottom: 15px;
+            font-weight: 600;
+            
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 450px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e1e8ed;
+            display: block;           /* ADD THIS */
+            margin-left: auto;        /* ADD THIS */
+            margin-right: auto;       /* ADD THIS */
+            margin-bottom: 20px; 
+        }
+
+        /* Results Section */
+        .result-container {
+            display: none;
+            margin-top: 30px;
+            padding: 35px;
+            border-radius: 8px;
+            background: #f8fafb;
+            border: 1px solid #e1e8ed;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .result-grade {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .result-severity {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .result-confidence {
+            font-size: 1.1em;
+            color: #5a6c7d;
+            font-weight: 500;
+        }
+
+        .result-description {
+            font-size: 1em;
+            line-height: 1.8;
+            color: #2c3e50;
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid;
+            margin-bottom: 25px;
+        }
+
+        /* Probability Bars */
+        .probabilities {
+            margin-top: 30px;
+        }
+
+        .probabilities h3 {
+            margin-bottom: 20px;
+            color: #1e3a5f;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .probability-bar {
+            margin-bottom: 18px;
+        }
+
+        .probability-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .bar-container {
+            background: #e8eef3;
+            border-radius: 6px;
+            overflow: hidden;
+            height: 28px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #1e3a5f;
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .gradcam-section {
+            display: none;
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 2px solid #e1e8ed;
+            text-align: center;
+        }
+
+        .gradcam-section.visible {
+            display: block;
+        }
+
+        .gradcam-label {
+            font-size: 0.95em;
+            color: #5a6c7d;
+            margin-bottom: 14px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .gradcam-image {
+            max-width: 100%;
+            max-height: 450px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #e1e8ed;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .spinner {
+            border: 4px solid #e8eef3;
+            border-top: 4px solid #1e3a5f;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: #1e3a5f;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            background: #fef0f0;
+            color: #c0392b;
+            padding: 18px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid #c0392b;
+            font-weight: 500;
+        }
+
+        /* KL Scale Information */
+        .kl-scale-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .kl-intro {
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .grade-table th {
+            background: #1e3a5f;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #1e3a5f;
+        }
+
+        .grade-table td {
+            padding: 15px;
+            border: 1px solid #e1e8ed;
+            color: #2c3e50;
+        }
+
+        .grade-table tr:nth-child(even) {
+            background: #f8fafb;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: black;
+            font-size: 0.9em;
+            
+        }
+
+        /* Disclaimer Box */
+        .disclaimer-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 30px 0;
+        }
+
+        .disclaimer-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .disclaimer-box p {
+            color: #856404;
+            line-height: 1.8;
+            margin-bottom: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #1e3a5f;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #b8c9e0;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #2c4f7c;
+            padding-top: 20px;
+            text-align: center;
+            color: #b8c9e0;
+            font-size: 0.9em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar h1 {
+                font-size: 1.4em;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .upload-area {
+                padding: 40px 20px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>Knee Osteoarthritis Severity Assessment System</h1>
+            <p>AI-Powered Radiographic Analysis & Classification</p>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="card upload-section">
+            <div class="section-header">
+                <h2>X-Ray Image Upload</h2>
+                <p>Upload a knee radiograph for automated Kellgren-Lawrence grading</p>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📋</div>
+                <div class="upload-text">Select X-Ray Image or Drag & Drop</div>
+                <div class="upload-subtext">Supported formats: PNG, JPG, JPEG (Maximum size: 10MB)</div>
+                <input type="file" id="fileInput" accept="image/png,image/jpeg,image/jpg">
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <h3>Uploaded Radiograph:</h3>
+                <img id="previewImage" class="preview-image" alt="X-ray Preview">
+                <button class="btn-primary" id="predictBtn">Analyze Radiograph</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p class="loading-text">Processing radiograph analysis...</p>
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="result-container" id="resultContainer">
+                <div class="result-header">
+                    <div class="result-grade" id="resultGrade"></div>
+                    <div class="result-severity" id="resultSeverity"></div>
+                    <div class="result-confidence" id="resultConfidence"></div>
+                </div>
+                <div class="result-description" id="resultDescription"></div>
+
+                <div class="probabilities">
+                    <h3>Classification Confidence Distribution:</h3>
+                    <div id="probabilityBars"></div>
+                </div>
+
+                <div class="gradcam-section" id="gradcamSection">
+                    <p class="gradcam-label">Model Attention Map — highlighted regions show what influenced the prediction</p>
+                    <img id="gradcamImage" class="gradcam-image" alt="GradCAM attention overlay">
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Kellgren-Lawrence Scale Information -->
+        <div class="kl-scale-section">
+            <div class="section-header">
+                <h2>Kellgren-Lawrence Classification System</h2>
+                <p>Standard radiographic grading system for osteoarthritis severity assessment</p>
+            </div>
+
+            <p class="kl-intro">
+                The Kellgren-Lawrence (KL) grading system is the gold standard for radiographic assessment of knee osteoarthritis severity. 
+                This classification scheme evaluates the presence and extent of osteophytes, joint space narrowing, subchondral sclerosis, 
+                and deformity visible on plain radiographs. The system categorizes osteoarthritis progression into five distinct grades, 
+                from healthy joints (Grade 0) to severe osteoarthritis (Grade 4).
+            </p>
+
+            <table class="grade-table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Grade</th>
+                        <th style="width: 20%;">Classification</th>
+                        <th>Radiographic Findings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="grade-badge" >Grade 0</span></td>
+                        <td><strong>Normal</strong></td>
+                        <td>No radiographic features of osteoarthritis. Normal joint space and bone structure.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="grade-badge" >Grade 1</span></td>
+                        <td><strong>Doubtful</strong></td>
+                        <td>Questionable joint space narrowing. Possible osteophytic lipping. Minimal changes.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="grade-badge" >Grade 2</span></td>
+                        <td><strong>Mild</strong></td>
+                        <td>Definite osteophytes. Possible joint space narrowing on anteroposterior weight-bearing radiograph.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="grade-badge" >Grade 3</span></td>
+                        <td><strong>Moderate</strong></td>
+                        <td>Multiple osteophytes. Definite joint space narrowing. Sclerosis. Possible attrition of bone.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="grade-badge" >Grade 4</span></td>
+                        <td><strong>Severe</strong></td>
+                        <td>Large osteophytes. Marked joint space narrowing. Severe sclerosis. Definite bony deformity.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>About This System</h3>
+                    <p>
+                        This automated classification system utilizes deep convolutional neural networks (CNN) 
+                        trained on radiographic data to provide Kellgren-Lawrence grading assessments. 
+                        The model employs advanced computer vision techniques for feature extraction and classification.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h3>Technical Information</h3>
+                    <ul>
+                        <li>Framework: TensorFlow/Keras</li>
+                        <li>Architecture: Convolutional Neural Network</li>
+                        <li>Input: Knee AP radiographs</li>
+                        <li>Output: KL Grade (0-4) with confidence scores</li>
+                        <li>Image Format: PNG, JPG, JPEG</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Important Notice</h3>
+                    <p>
+                        This tool is designed for educational and research purposes. Clinical decisions should 
+                        always be made by qualified healthcare professionals based on comprehensive patient evaluation, 
+                        including clinical history, physical examination, and appropriate imaging studies.
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Knee Osteoarthritis AI Diagnostic System. Deep Learning Medical Imaging Analysis.</p>
+                <p style="margin-top: 5px; font-size: 0.85em;">For research and educational use only. Not for clinical diagnosis.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const predictBtn = document.getElementById('predictBtn');
+        const loading = document.getElementById('loading');
+        const resultContainer = document.getElementById('resultContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        const gradcamSection = document.getElementById('gradcamSection');
+        const gradcamImage = document.getElementById('gradcamImage');
+
+        let selectedFile = null;
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            // Check file type
+            if (!file.type.match('image/(png|jpeg|jpg)')) {
+                showError('Invalid file format. Please upload a PNG, JPG, or JPEG image.');
+                return;
+            }
+
+            // Check file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                showError('File size exceeds 10MB limit. Please upload a smaller image.');
+                return;
+            }
+
+            selectedFile = file;
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                resultContainer.style.display = 'none';
+                gradcamSection.classList.remove('visible');
+                errorMessage.style.display = 'none';
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        // Predict button click
+        predictBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                showError('No image selected. Please upload a radiograph first.');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'block';
+            resultContainer.style.display = 'none';
+            gradcamSection.classList.remove('visible');
+            errorMessage.style.display = 'none';
+            predictBtn.disabled = true;
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    showError(data.error);
+                } else {
+                    displayResults(data);
+                }
+            } catch (error) {
+                showError('Server connection error. Please verify the application is running and try again.');
+            } finally {
+                loading.style.display = 'none';
+                predictBtn.disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            document.getElementById('resultGrade').textContent = data.grade;
+            document.getElementById('resultGrade').style.color = data.color;
+            document.getElementById('resultSeverity').textContent = data.severity;
+            document.getElementById('resultConfidence').textContent = `Confidence Level: ${data.confidence}%`;
+            
+            const description = document.getElementById('resultDescription');
+            description.textContent = data.description;
+            description.style.borderLeftColor = data.color;
+
+            // Display probability bars
+            const probabilityBars = document.getElementById('probabilityBars');
+            probabilityBars.innerHTML = '';
+
+            for (const [grade, probability] of Object.entries(data.all_probabilities)) {
+                const barHTML = `
+                    <div class="probability-bar">
+                        <div class="probability-label">
+                            <span>${grade}</span>
+                            <span>${probability}%</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${probability}%"></div>
+                        </div>
+                    </div>
+                `;
+                probabilityBars.innerHTML += barHTML;
+            }
+
+            if (data.gradcam_image) {
+                gradcamImage.src = data.gradcam_image;
+                gradcamSection.classList.add('visible');
+            } else {
+                gradcamSection.classList.remove('visible');
+            }
+
+            resultContainer.style.display = 'block';
+            
+            // Scroll to results
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 6000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# OAI Images — cannot be shared (data use agreement)
+KL_Sorted_Split/
+
+# Model weights — too large for GitHub
+*.pth
+*.npy
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyd
+
+# OS files
+.DS_Store
+Thumbs.db
