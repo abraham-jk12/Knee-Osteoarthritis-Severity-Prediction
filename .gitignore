@@ -3,7 +3,7 @@ KL_Sorted_Split/
 
 # Model weights — too large for GitHub
 *.pth
-*.npy
+
 
 # Python cache
 __pycache__/
