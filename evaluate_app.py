@@ -139,9 +139,9 @@ def build_densenet169() -> nn.Module:
         m,
         _resolve(
             [
-                "best_model_thomas_colab.pth",
-                "best_model_thomas_colab (3).pth",
-                "best_model_thomas_colab (1).pth",
+                "best_model_densenet_colab.pth",
+                "best_model_densenet_colab (3).pth",
+                "best_model_densenet_colab (1).pth",
             ]
         ),
     )
