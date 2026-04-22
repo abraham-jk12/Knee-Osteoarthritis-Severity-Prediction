@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import gdown
 from flask import Flask, render_template, request, jsonify
 import base64
 import io
@@ -158,24 +157,6 @@ def overlay_cam_on_image(cam_np: np.ndarray, original_image: Image.Image) -> str
 
 _model_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Google Drive model download setup
-MODEL_FILES = {
-    "best_efficientnet_v2s.pth": "1iJN0__jm1heUERZty8nHqnCuzuxvQHsg",
-    "best_efficientnet_b5.pth": "1XQfVD5PT2f9YY5pm6FRl_BBI5FtA74TC",
-    "best_model_thomas_colab.pth": "1SB1xVOwjlQGYqdCqYK3fuvRHNfMLGtZX",
-}
-
-def download_models():
-    for filename, file_id in MODEL_FILES.items():
-        path = os.path.join(_model_dir, filename)
-        if not os.path.exists(path):
-            print(f"Downloading {filename} from Google Drive...")
-            url = f"https://drive.google.com/uc?id={file_id}"
-            gdown.download(url, path, quiet=False)
-
-# DOWNLOAD MODELS BEFORE LOADING
-download_models()
-
 
 def _resolve_checkpoint(names: str | list[str]) -> str:
     if isinstance(names, str):
@@ -222,16 +203,13 @@ MODEL_SPECS = {
     "densenet169": {
         "builder": _build_densenet169,
         "checkpoint_names": [
-            "best_model_thomas_colab.pth",
-            "best_model_thomas_colab (3).pth",
-            "best_model_thomas_colab (1).pth",
-            "best_model_thomas_colab (2).pth",
+            "best_model_densenet_colab.pth"
         ],
         "input_size": DENSENET_INPUT_SIZE,
     },
     "efficientnet_b5": {
         "builder": _build_efficientnet_b5,
-        "checkpoint_names": ["best_efficientnet_b5.pth"],
+        "checkpoint_names": ["best_efficientnet_b5.pth", "best_efficientnet_b5 (1).pth"],
         "input_size": EFFB5_INPUT_SIZE,
     },
     "efficientnet_v2_s": {
@@ -368,6 +346,5 @@ def about():
 if __name__ == "__main__":
     print("Knee Osteoarthritis Severity Assessment System")
     print("Models: DenseNet-169 + EfficientNet-B5 + EfficientNet-V2-S (TTA + optimized weights)")
-    port = int(os.environ.get("PORT", 10000))
-    print(f"http://127.0.0.1:{port}")
-    app.run(host="0.0.0.0", port=port)
+    print("http://127.0.0.1:5000")
+    app.run(host="0.0.0.0", port=10000)
