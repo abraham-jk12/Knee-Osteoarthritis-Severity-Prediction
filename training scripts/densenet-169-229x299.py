@@ -1,20 +1,4 @@
-"""
-Replication of Thomas et al. 2020:
-"Automated Classification of Radiographic Knee Osteoarthritis Severity
-Using Deep Neural Networks" — Radiology: AI
 
-Key paper details replicated:
-- DenseNet-169 backbone, ImageNet pretrained
-- Full image input (no manual joint cropping)
-- 299x299 input size
-- Stochastic augmentation (80% prob): flip, rotate, zoom, contrast, noise
-- Standard CrossEntropyLoss, no class weighting
-- Adam optimizer lr=1e-4
-- End-to-end training, no frozen layers
-- Evaluated with Quadratic Weighted Kappa
-
-Google Colab T4 GPU optimized.
-"""
 
 # ── 0. Install extra deps ────────────────────────────────────────────────────
 import subprocess, sys
