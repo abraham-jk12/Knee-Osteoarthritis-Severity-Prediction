@@ -221,7 +221,12 @@ MODEL_ORDER = ["densenet169", "efficientnet_b5", "efficientnet_v2_s"]
 MODEL_SPECS = {
     "densenet169": {
         "builder": _build_densenet169,
-        "checkpoint_names": ["best_model_thomas_colab.pth"],
+        "checkpoint_names": [
+            "best_model_thomas_colab.pth",
+            "best_model_thomas_colab (3).pth",
+            "best_model_thomas_colab (1).pth",
+            "best_model_thomas_colab (2).pth",
+        ],
         "input_size": DENSENET_INPUT_SIZE,
     },
     "efficientnet_b5": {
