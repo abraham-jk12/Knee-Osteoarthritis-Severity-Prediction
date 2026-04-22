@@ -222,7 +222,8 @@ MODEL_SPECS = {
     },
 }
 
-weights_path = os.path.join(_model_dir, "optimized_ensemble_weights_tta.npy")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+weights_path = os.path.join(BASE_DIR, "optimized_ensemble_weights_tta.npy")
 if not os.path.isfile(weights_path):
     print(f"ERROR: Optimized weights file not found: {weights_path}")
     raise SystemExit(1)
